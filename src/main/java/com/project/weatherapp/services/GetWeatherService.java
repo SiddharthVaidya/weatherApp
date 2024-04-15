@@ -1,14 +1,11 @@
 package com.project.weatherapp.services;
 
 import com.project.weatherapp.DTO.WeatherDTO;
-import com.project.weatherapp.WeatherappApplication;
 import com.project.weatherapp.model.WeatherModel;
-import org.apache.catalina.core.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashMap;
 
 @Service
 public class GetWeatherService {
@@ -17,12 +14,21 @@ public class GetWeatherService {
 
     public WeatherDTO getWeatherDetails(String city){
         RestTemplate restTemplate = new RestTemplate();
-        //String url = BASE_URL+"?q="+city+"&appId="+API_KEY;
         UriComponentsBuilder url = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .queryParam("q", city)
                 .queryParam("appId", API_KEY);
         WeatherModel response = restTemplate.getForObject(url.toUriString(), WeatherModel.class);
-        //System.out.println(restTemplate+" "+response);
+        return convertToDTO(response);
+    }
+
+    public WeatherDTO getLatLongWeather(Float lat, Float lon){
+        RestTemplate restTemplate = new RestTemplate();
+        UriComponentsBuilder url = UriComponentsBuilder.fromHttpUrl(BASE_URL)
+                .queryParam("lat", lat)
+                .queryParam("lon", lon)
+                .queryParam("appId", API_KEY);
+        WeatherModel response = restTemplate.getForObject(url.toUriString(), WeatherModel.class);
+
         return convertToDTO(response);
     }
     private WeatherDTO convertToDTO(WeatherModel body){
